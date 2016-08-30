@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lesson 2</title>
+   
+</head>
+<body>
+    <div class="container">
+        <h1>Privide post id to see the info</h1>
+        <input type="number" name="provideId" id="provideId">
+            <button id="check">Check info</button>
+
+            <div class="posts"></div>
+    </div>
+  
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    
+<script id="postsTemplate" type="posts/template">
+    <div id="postHtml">
+    <p> UserId: {{userId}} </p>
+    <p> Post id: {{id}} </p>
+    <p> Post title: {{title}} </p>
+    <p> Post content: {{body}} </p>
+    </div> 
+</script>
+    
+<script>
+    
+  (function() {
+      
+      var obj = {
+          
+          template: $.trim( $("#postsTemplate").html() ),
+          
+          posts: $("div.posts"),
+          
+          init: function() {
+              $("#check").on("click", function() {
+                  
+                  var value = $("#provideId").val(),
+                      jsonLink = "http://jsonplaceholder.typicode.com/posts/" + value;
+                  
+                  obj.err(value);
+                  obj.data(jsonLink);         
+              })
+          },
+          
+          err: function(v) {
+              if ( v > 100 || v < 1) {
+                  alert("This post id does not exist. Please provide acurate post id.")
+              }
+          },
+          
+          data: function(link) {
+              $.getJSON(link, function(result) {
+          //    console.log(result);
+              obj.presentVal(result);
+              })
+            },
+          
+          presentVal: function(r) {
+
+                var temp = obj.template.replace( /{{userId}}/ig, r.userId )
+                                .replace( /{{id}}/ig, r.id )
+                                .replace( /{{title}}/ig, r.title )
+                                .replace( /{{body}}/ig, r.body );
+              
+                this.posts.children("#postHtml")
+                                .remove()
+                                .end()
+                            .append(temp);
+          }
+      }
+      obj.init();
+  })();
+</script>
+    
+</body>
+</html>
+    
